@@ -1,0 +1,32 @@
+version: '3'
+services:
+  mongo:
+    image: bitnami/mongodb
+    restart: always
+    networks:
+      - base
+    ports:
+      - "27017:27017"
+    environment:
+      MONGODB_DATABASE: calendar
+      MONGODB_USERNAME: root 
+      MONGODB_PASSWORD: root
+
+  api:
+    image: node:10
+    command:  "npm start"
+    depends_on:
+      - mongo
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - "3000:3000"
+    networks:
+      - base
+
+networks:
+  base:
+
+volumes:
+  db_data:
