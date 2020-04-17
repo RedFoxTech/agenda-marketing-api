@@ -1,6 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const cryptoJs = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
+const mailer = require('../modules/mailer');
 
 const authConfig = require('../config/auth')
 
@@ -14,13 +18,17 @@ function generateToken(params = {}) {
     });
 }
 
-router.get('/', async(req, res) => {
+router.get('/', async (req, res) => {
     try {
         const users = await User.find();
 
-        return res.send({ users });
+        return res.send({
+            users
+        });
     } catch (error) {
-        return res.status(400).send({ error: 'Error loading users' });
+        return res.status(400).send({
+            error: 'Error loading users'
+        });
     }
 });
 
@@ -85,6 +93,116 @@ router.post('/authenticate', async (req, res) => {
             id: user.id
         })
     });
+
 });
+
+router.put('/forgot_password', async (req, res) => {
+    const {
+        email
+    } = req.body;
+
+    try {
+
+        const user = await User.findOne({
+            email
+        })
+
+        if (!user)
+            return res.status(400).send({
+                error: 'User not found'
+            });
+
+        const token = crypto.randomBytes(20).toString('HEX');
+
+        const now = new Date();
+        now.setHours(now.getHours() + 1);
+
+        await User.findOneAndUpdate({
+            email
+        }, {
+            'passwordResetToken': token,
+            'passwordResetExpires': now
+        }, {
+            new: true
+        });
+
+
+        // await connection('users')
+        //     .where('email', email)
+        //     .update({
+        //         'passwordResetToken': token,
+        //         'passwordResetExpires': now
+        //     });
+
+        mailer.sendMail({
+            to: email,
+            from: 'bianca.nunes1175@gmail.com',
+            template: 'auth/forgot_password',
+            context: {
+                token
+            },
+
+        }, (err) => {
+            if (err) {
+                return res.status(400).send({
+                    error: 'Cannot send forgot password email'
+                })
+            }
+            res.status(204).send();
+        });
+
+        res.status(204).send();
+
+    } catch (error) {
+        res.status(400).send({
+            error: 'Erro on forgot password, try again'
+        });
+    }
+});
+
+router.post('/reset_password', async (req, res) => {
+    const {
+        email,
+        password,
+        token
+    } = req.body;
+
+    try {
+        const user = await User.findOne({
+            email
+        })
+        // const [user] = await connection('users').where('email', email).select(['users.passwordResetToken', 'users.passwordResetExpires']);
+    
+        if (!user)
+            return res.status(400).send({
+                error: 'User not found'
+            });
+
+        if (token !== user.passwordResetToken)
+            return res.status(400).send({
+                error: 'Token invalid'
+            });
+
+        const now = new Date();
+
+        if (now > user.passwordResetExpires)
+            return res.status(400).send({
+                error: 'Token expired, generate a new one'
+            })
+        console.log(password)
+        // const user2 = await connection('users').where('email', email).update('password', password);
+        const user2 = await User.findOneAndUpdate({
+            email
+        }, {
+            password: password
+        })
+        return res.json(user2);
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({
+            error: 'Cannot reset password, try again'
+        })
+    }
+})
 
 module.exports = app => app.use('/auth', router)
