@@ -24,6 +24,10 @@ services:
       - "3000:3000"
     networks:
       - base
+    environment:
+      NODE_ENV: development
+    env_file:
+      - .env
 
 networks:
   base:
