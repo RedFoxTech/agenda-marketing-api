@@ -171,8 +171,7 @@ router.post('/reset_password', async (req, res) => {
         const user = await User.findOne({
             email
         })
-        // const [user] = await connection('users').where('email', email).select(['users.passwordResetToken', 'users.passwordResetExpires']);
-    
+
         if (!user)
             return res.status(400).send({
                 error: 'User not found'
@@ -189,16 +188,16 @@ router.post('/reset_password', async (req, res) => {
             return res.status(400).send({
                 error: 'Token expired, generate a new one'
             })
-        console.log(password)
-        // const user2 = await connection('users').where('email', email).update('password', password);
+
+        const hash = await bcrypt.hash(password, 10);
+
         const user2 = await User.findOneAndUpdate({
             email
         }, {
-            password: password
+            password: hash
         })
         return res.json(user2);
     } catch (error) {
-        console.log(error)
         res.status(400).send({
             error: 'Cannot reset password, try again'
         })
