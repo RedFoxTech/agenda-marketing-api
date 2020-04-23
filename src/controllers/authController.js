@@ -1,6 +1,5 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const cryptoJs = require('crypto-js');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
@@ -62,6 +61,7 @@ router.post('/register', async (req, res) => {
         });
     }
 });
+
 
 router.post('/authenticate', async (req, res) => {
     const {
@@ -127,12 +127,6 @@ router.put('/forgot_password', async (req, res) => {
         });
 
 
-        // await connection('users')
-        //     .where('email', email)
-        //     .update({
-        //         'passwordResetToken': token,
-        //         'passwordResetExpires': now
-        //     });
 
         mailer.sendMail({
             to: email,
@@ -200,6 +194,18 @@ router.post('/reset_password', async (req, res) => {
     } catch (error) {
         res.status(400).send({
             error: 'Cannot reset password, try again'
+        })
+    }
+})
+
+router.delete('/:userId', async (req, res) => {
+    try {
+        await User.findByIdAndRemove(req.params.userId);
+
+        return res.send();
+    } catch (error) {
+        return res.status(400).send({
+            error: 'Error deleting user'
         })
     }
 })

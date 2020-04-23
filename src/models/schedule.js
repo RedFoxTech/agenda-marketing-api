@@ -30,6 +30,9 @@ const ScheduleSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
+    body:{
+        type: String
+    },
     attendees:[{
         type: mongoose.Schema.Types.String,
         ref: 'User'
