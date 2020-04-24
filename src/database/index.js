@@ -3,7 +3,7 @@ const config = require('../config/config')
 
 module.exports = () => {
     mongoose.connect(`${config.MONGODB_URI}${config.MONGODB_DATABASE}`, {
-        authSource: config.MONGODB_DATABASE,
+        authSource: config.MONGODB_AUTH,
         user: config.MONGODB_USER,
         pass: config.MONGODB_PASS,
         useNewUrlParser: true
