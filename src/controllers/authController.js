@@ -55,6 +55,7 @@ router.post('/register', async (req, res) => {
             })
         })
     } catch (error) {
+        console.log(error)
         return res.status(400).send({
             error: 'Registration failed'
         });
@@ -93,6 +94,7 @@ router.post('/authenticate', async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error)
         res.status(400).send({ error: 'Error authenticate'})
     }
 
