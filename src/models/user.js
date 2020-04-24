@@ -1,7 +1,7 @@
-const mongoose = require('../database');
-const bcrypt = require('bcrypt');
+const {Schema, model} = require('mongoose')
+const bcrypt = require('bcrypt-nodejs');
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
     name: {
         type: String,
         require: true,
@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 UserSchema.pre('save', async function (next) {
-    const hash = await bcrypt.hash(this.password, 10);
+    const hash = await bcrypt.hashSync(this.password);
 
     this.password = hash;
 
@@ -40,6 +40,6 @@ UserSchema.pre('save', async function (next) {
 })
 
 
-const User = mongoose.model('User', UserSchema);
+const User = model('User', UserSchema);
 
 module.exports = User;

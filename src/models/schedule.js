@@ -1,6 +1,6 @@
-const mongoose = require('../database');
+const { Schema, model} = require('mongoose');
 
-const ScheduleSchema = new mongoose.Schema({
+const ScheduleSchema = new Schema({
     id:{
         type: String,
         default: '0'
@@ -27,18 +27,18 @@ const ScheduleSchema = new mongoose.Schema({
         type: String,
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
     },
     body:{
         type: String
     },
     attendees:[{
-        type: mongoose.Schema.Types.String,
+        type: Schema.Types.String,
         ref: 'User'
     }],
 });
 
-const Schedule = mongoose.model('Schedule', ScheduleSchema);
+const Schedule = model('Schedule', ScheduleSchema);
 
 module.exports = Schedule;

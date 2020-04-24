@@ -1,6 +1,7 @@
-const mongoose = require('../database');
+const {Schema, model} = require('mongoose');
 
-const CategorySchema = new mongoose.Schema({
+
+const CategorySchema = new Schema({
     id:{
         type: String,
         default: '0'
@@ -19,6 +20,6 @@ const CategorySchema = new mongoose.Schema({
     },
 });
 
-const Category = mongoose.model('Category', CategorySchema);
+const Category = model('Category', CategorySchema);
 
 module.exports = Category;

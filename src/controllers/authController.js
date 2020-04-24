@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt-nodejs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
@@ -36,7 +36,6 @@ router.post('/register', async (req, res) => {
         email
     } = req.body;
 
-
     try {
         if (await User.findOne({
                 email
@@ -68,31 +67,34 @@ router.post('/authenticate', async (req, res) => {
         email,
         password
     } = req.body;
+    try {
+        const user = await User.findOne({
+            email
+        }).select('+password');
 
-    const user = await User.findOne({
-        email
-    }).select('+password');
 
+        if (!user)
+            return res.status(400).send({
+                error: 'User not found'
+            });
 
-    if (!user)
-        return res.status(400).send({
-            error: 'User not found'
+        if (!bcrypt.compareSync(password, user.password))
+            return res.status(400).json({
+                msg: 'password incorrect'
+            });
+
+        user.password = undefined;
+
+        res.send({
+            user,
+            token: generateToken({
+                id: user.id
+            })
         });
 
-    if (!await bcrypt.compare(password, user.password))
-        return res.status(400).send({
-            error: 'Invalid password'
-        });
-
-    user.password = undefined;
-
-
-    res.send({
-        user,
-        token: generateToken({
-            id: user.id
-        })
-    });
+    } catch (error) {
+        res.status(400).send({ error: 'Error authenticate'})
+    }
 
 });
 
