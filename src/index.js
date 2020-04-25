@@ -9,12 +9,14 @@ var app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
 
-
-require('./controllers/authController')(app);
-require('./controllers/scheduleController')(app);
-require('./controllers/categoryController')(app);
+require('./routes/user')(app)
+require('./routes/session')(app)
+require('./routes/schedule')(app)
+require('./routes/category')(app)
 
 mongoConnection
     .on('error', console.log)

@@ -8,7 +8,6 @@ module.exports = () => {
         pass: config.MONGODB_PASS,
         useNewUrlParser: true
     }).then(() => {
-        console.log(config.MONGODB_DATABASE, config.MONGODB_URI);
         console.log('mongo conectado!');
     }).catch(err => {
         console.log(err)
