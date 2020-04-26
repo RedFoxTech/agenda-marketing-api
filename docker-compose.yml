@@ -1,33 +1,35 @@
 version: '3'
 
 services: 
-  api:
-      container_name: agenda_marketing_api
-      image: node:10-alpine
-      networks: 
-          - db_networks
-      ports: 
-          - "3000:3000"
-      depends_on: 
-          - db
-      working_dir: /app
-      volumes: 
-          - ./:/app
-      command: sh -c "npm install && npm run start"
+    api:
+        container_name: agenda_marketing_api
+        image: node:10-alpine
+        networks: 
+            - db_networks
+        ports: 
+            - "3000:3000"
+        depends_on: 
+            - db
+        working_dir: /app
+        volumes: 
+            - ./:/app
+        command: sh -c "npm install && npm run start"
       
-  db:
-      container_name: agenda_marketing_db
-      image: bitnami/mongodb:latest
-      ports:
-          - "27017:27017"
-      volumes: 
-          - ./mongo/data:/data/db
-      networks: 
-          - db_networks
-      environment:
-        MONGODB_USER: root
-        MONGODB_PASS: root
-        MONGO_DATA_DIR: /data/db
+    db:
+        container_name: agenda_marketing_db
+        image: mongo
+        ports:
+            - "27017:27017"
+        volumes: 
+            - ./data/db:/data/db
+        networks: 
+            - db_networks
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+            - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+            - MONGO_INITDB_DATABASE=${MONGODB_DATABASE}
+      
+
 
 networks: 
     db_networks:
