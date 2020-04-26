@@ -50,10 +50,25 @@ module.exports = {
                 })
             })
         } catch (error) {
-            console.log(error)
             return res.status(400).send({
                 error: 'Registration failed'
             });
+        }
+    },
+
+    async update(req, res) {
+        try {
+            await User.findByIdAndUpdate(req.params.userId, {
+                ...req.body
+            }, {
+                new: true
+            });
+
+            return res.send();
+        } catch (error) {
+            return res.status(400).send({
+                error: 'Error updating user'
+            })
         }
     },
 
