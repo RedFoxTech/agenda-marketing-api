@@ -37,7 +37,7 @@ steps:
     image: banzaicloud/drone-kaniko
     settings:
       registry: gcr.io
-      repo: redfox-tech/mkt-agenda-api-dev
+      repo: redfox-doutor-alper/alper-api-dev
       tags:
         - latest
       username: _json_key
@@ -63,7 +63,7 @@ steps:
     image: banzaicloud/drone-kaniko
     settings:
       registry: gcr.io
-      repo: redfox-tech/mkt-agenda-api-prod
+      repo: redfox-doutor-alper/alper-api-prod
       tags:
         - latest
       username: _json_key
