@@ -1,12 +1,5 @@
 kind: pipeline
 name: default
-trigger:
-  branch:
-    - dev
-    - staging
-    - master
-  event:
-    - push
 
 steps:
   - name: code-analysis
