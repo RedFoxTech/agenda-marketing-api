@@ -1,6 +1,13 @@
 kind: pipeline
 type: docker
 name: default
+trigger:
+  branch:
+    - develop
+    - staging
+    - master
+  event:
+    - push
 
 steps:
   - name: code-analysis
@@ -18,10 +25,8 @@ name: build-staging
 depends_on:
   - default
 trigger:
-  branch:
-    - staging
-  event:
-    - push
+  branch: staging
+  event: push
 
 steps:
 
@@ -49,10 +54,8 @@ name: build-develop
 depends_on:
   - default
 trigger:
-  branch:
-    - dev
-  event:
-    - push
+  branch: dev
+  event: push
 
 steps:
 - name: install
@@ -79,10 +82,8 @@ name: build-production
 depends_on:
   - default
 trigger:
-  branch:
-    - master
-  event:
-    - push
+  branch: master
+  event: push
 
 steps:
 
