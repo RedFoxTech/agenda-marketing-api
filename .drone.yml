@@ -1,9 +1,8 @@
 kind: pipeline
-type: docker
 name: default
 trigger:
   branch:
-    - develop
+    - dev
     - staging
     - master
   event:
@@ -21,12 +20,74 @@ steps:
 
 ---
 kind: pipeline
+name: build-staging
+depends_on:
+  - default
+trigger:
+  branch:
+    - staging
+  event:
+    - push
+
+steps:
+
+- name: install
+  image: node:10
+  commands:
+    - npm install
+
+- name: publish
+  image: banzaicloud/drone-kaniko
+  settings:
+    registry: gcr.io
+    repo: redfox-tech/mkt-api-staging
+    tags:
+      - latest
+    build_args:
+      - VERSION=latest
+    username: _json_key
+    password:
+      from_secret: gcp_credentials
+
+---
+kind: pipeline
+name: build-dev
+depends_on:
+  - default
+trigger:
+  branch:
+    - dev
+  event:
+    - push
+
+steps:
+- name: install
+  image: node:10
+  commands:
+    - npm install
+
+- name: publish
+  image: banzaicloud/drone-kaniko
+  settings:
+    registry: gcr.io
+    repo: redfox.tech/mkt-api-develop
+    tags:
+      - latest
+    build_args:
+      - VERSION=latest
+    username: _json_key
+    password:
+      from_secret: gcp_credentials
+---
+kind: pipeline
 name: build-production
 depends_on:
   - default
 trigger:
-  branch: master
-  event: push
+  branch:
+    - master
+  event:
+    - push
 
 steps:
 
