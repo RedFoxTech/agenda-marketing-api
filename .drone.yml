@@ -70,7 +70,7 @@ steps:
   image: banzaicloud/drone-kaniko
   settings:
     registry: gcr.io
-    repo: redfox.tech/mkt-api-develop
+    repo: redfox-tech/mkt-api-develop
     tags:
       - latest
     build_args:
